@@ -164,17 +164,6 @@ The conversion is done in a specific order to handle nested structures correctly
     ;; (message "Final conversion result:\n%s" (buffer-string))
     (buffer-string)))
 
-(defun masssrkdown-to-org--smart-yank-advice (orig-fun &rest args)
-  "Advice for yank that converts markdown to org-mode when appropriate."
-  (if (and (eq major-mode 'org-mode)
-           markdown-to-org-convert-on-yank
-           (gui-backend-selection-exists-p 'CLIPBOARD))
-      (let ((text (gui-get-selection 'CLIPBOARD)))
-        (if (and text (markdown-to-org--looks-like-markdown-p text))
-            (insert (markdown-to-org--convert text))
-          (apply orig-fun args)))
-    (apply orig-fun args)))
-
 (defun markdown-to-org--smart-yank-advice (orig-fun &rest args)
   "Advice for yank that converts markdown to org-mode when appropriate."
   (if (eq major-mode 'org-mode)
@@ -225,8 +214,14 @@ The conversion is done in a specific order to handle nested structures correctly
   :lighter " MD->Org"
   :keymap markdown-to-org-mode-map
   (if markdown-to-org-mode
-      (setq-local markdown-to-org-convert-on-yank t)
-    (setq-local markdown-to-org-convert-on-yank nil)))
+      (progn
+        (setq-local markdown-to-org-convert-on-yank t)
+        (advice-add 'yank :around #'markdown-to-org--smart-yank-advice)
+        (advice-add 'yank-pop :around #'markdown-to-org--smart-yank-advice))
+    (progn
+      (setq-local markdown-to-org-convert-on-yank nil)
+      (advice-remove 'yank #'markdown-to-org--smart-yank-advice)
+      (advice-remove 'yank-pop #'markdown-to-org--smart-yank-advice))))
 
 (provide 'markdown-to-org)
 
