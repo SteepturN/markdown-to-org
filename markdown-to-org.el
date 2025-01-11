@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2024 Seijiro Ikehata
 
-;; Author: Your Name <modeverv@g-m.com>
+;; Author: Seijiro Ikehata <modeverv@g-m.com>
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "27.1"))
 ;; Keywords: convenience, markdown, org
