@@ -149,8 +149,8 @@ The conversion is done in a specific order to handle nested structures correctly
 
     ;; Convert bold (**) and italic (_)
     (goto-char (point-min))
-    (while (re-search-forward "\\*\\*\\([^*\n]+\\)\\*\\*" nil t)
-      (replace-match "*\\1*"))
+    (while (re-search-forward "\\([^*]\\)\\*\\*\\([^*\n]+\\)\\*\\*" nil t)
+      (replace-match "\\1*\\2*"))
     (goto-char (point-min))
     (while (re-search-forward "_\\([^_\n]+\\)_" nil t)
       (replace-match "/\\1/"))
